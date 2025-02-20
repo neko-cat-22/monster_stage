@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数値のカンマ自動挿入</title>
+    <style>
+        input {
+            font-size: 18px;
+            padding: 5px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <label for="numberInput">数値を入力:</label>
+    <input type="text" id="numberInput" placeholder="数値を入力" oninput="formatNumber(this)">
+
+    <script>
+        function formatNumber(input) {
+            // 現在のカーソル位置を取得
+            let cursorPosition = input.selectionStart;
+            let value = input.value.replace(/,/g, ''); // すべてのカンマを削除
+
+            // 数値としてフォーマット（整数部分のみ）
+            let formattedValue = Number(value).toLocaleString();
+
+            // 入力欄に反映
+            input.value = formattedValue;
+
+            // カーソル位置を末尾に設定
+            input.setSelectionRange(formattedValue.length, formattedValue.length);
+        }
+    </script>
+
+</body>
+</html>
