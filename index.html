@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>クエスト検索サイト</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>クエスト検索</h1>
+
+  <!-- 検索窓 -->
+  <input type="text" id="searchBox" placeholder="クエスト名で検索">
+
+  <!-- 条件切り替えボタン -->
+  <button id="conditionToggle" class="toggle-btn">条件切り替え: OFF</button>
+
+  <!-- ギミックボタン群 -->
+  <div id="gimmickButtons"></div>
+
+  <!-- 検索対象オブジェクト表示領域 -->
+  <div id="questList"></div>
+
+  <script src="gimmicks.js"></script>
+  <script src="quests.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
