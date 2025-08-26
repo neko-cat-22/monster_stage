@@ -40,17 +40,18 @@ function renderQuests() {
   questList.innerHTML = "";
 
   quests.forEach(q => {
-    // 検索フィルタ（名前）
-    if (keyword && !q.name.includes(keyword)) return;
-
-    // 必須ギミック判定
-    let requiredTags = [...q.required];
-    if (conditionToggle) {
-      requiredTags = Array.from(new Set([...q.required, ...q.appearance]));
+    // 検索窓に入力がある場合 → 名前検索のみ
+    if (keyword) {
+      if (!q.name.includes(keyword)) return;
+    } else {
+      // 入力がない場合 → ギミック条件チェック
+      let requiredTags = [...q.required];
+      if (conditionToggle) {
+        requiredTags = Array.from(new Set([...q.required, ...q.appearance]));
+      }
+      const hasAll = requiredTags.every(tag => activeGimmicks.has(tag));
+      if (!hasAll) return;
     }
-
-    const hasAll = requiredTags.every(tag => activeGimmicks.has(tag));
-    if (!hasAll) return;
 
     // カード生成
     const card = document.createElement("div");
