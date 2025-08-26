@@ -1,0 +1,59 @@
+body {
+  font-family: sans-serif;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+#searchBox {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.toggle-btn {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  cursor: pointer;
+}
+
+#gimmickButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.gimmick-btn {
+  padding: 6px 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+  background: #eee;
+}
+
+.gimmick-btn.active {
+  background: #444;
+  color: #fff;
+}
+
+.quest-card {
+  border-radius: 6px;
+  color: #000;
+  padding: 10px;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+/* 属性色 */
+.quest-fire { background: #f88; }
+.quest-water { background: #88f; color: #fff; }
+.quest-wood { background: #8f8; }
+.quest-light { background: #ff8; }
+.quest-dark { background: #c8f; }
