@@ -1,87 +1,94 @@
-let conditionToggle = false; // 条件切り替え状態
-let activeGimmicks = new Set(); // 押されているギミック群
+// script.js
+// 属性ごとの色
+const attributeColors = {
+  "火": "#f44336",
+  "水": "#2196f3",
+  "木": "#4caf50",
+  "光": "#ffeb3b",
+  "闇": "#9c27b0"
+};
 
-// DOM取得
-const searchBox = document.getElementById("searchBox");
-const conditionBtn = document.getElementById("conditionToggle");
-const gimmickContainer = document.getElementById("gimmickButtons");
-const questList = document.getElementById("questList");
+// ページ読み込み時に実行
+window.onload = () => {
+  generateGimmickButtons();
+  renderQuests(quests);
+
+  document.getElementById("searchBox").addEventListener("input", filterQuests);
+};
 
 // ギミックボタン生成
-function createGimmickButtons() {
-  gimmicks.forEach(g => {
-    const btn = document.createElement("button");
-    btn.textContent = g;
-    btn.className = "gimmick-btn";
-    btn.addEventListener("click", () => {
-      if (activeGimmicks.has(g)) {
-        activeGimmicks.delete(g);
-        btn.classList.remove("active");
-      } else {
-        activeGimmicks.add(g);
-        btn.classList.add("active");
-      }
-      renderQuests();
+function generateGimmickButtons() {
+  const container = document.getElementById("gimmickButtons");
+
+  gimmickCategories.forEach(category => {
+    // カテゴリタイトル
+    const titleEl = document.createElement("h3");
+    titleEl.textContent = category.title;
+    titleEl.classList.add("gimmick-title");
+    container.appendChild(titleEl);
+
+    // ボタングループ
+    const group = document.createElement("div");
+    group.classList.add("gimmick-group");
+
+    category.gimmicks.forEach(gimmick => {
+      const button = document.createElement("button");
+      button.textContent = gimmick;
+      button.classList.add("gimmick-button");
+      button.dataset.gimmick = gimmick;
+
+      button.addEventListener("click", () => {
+        button.classList.toggle("active");
+        filterQuests();
+      });
+
+      group.appendChild(button);
     });
-    gimmickContainer.appendChild(btn);
+
+    container.appendChild(group);
   });
 }
 
-// 条件切り替えボタン
-conditionBtn.addEventListener("click", () => {
-  conditionToggle = !conditionToggle;
-  conditionBtn.textContent = `条件切り替え: ${conditionToggle ? "ON" : "OFF"}`;
-  renderQuests();
-});
-
-// クエスト表示
-function renderQuests() {
-  const keyword = searchBox.value.trim();
+// クエスト一覧を描画
+function renderQuests(list) {
+  const questList = document.getElementById("questList");
   questList.innerHTML = "";
 
-  quests.forEach(q => {
-    // 検索窓に入力がある場合 → 名前検索のみ
-    if (keyword) {
-      if (!q.name.includes(keyword)) return;
-    } else {
-      // 入力がない場合 → ギミック条件チェック
-      let requiredTags = [...q.required];
-      if (conditionToggle) {
-        requiredTags = Array.from(new Set([...q.required, ...q.appearance]));
-      }
-      const hasAll = requiredTags.every(tag => activeGimmicks.has(tag));
-      if (!hasAll) return;
-    }
+  list.forEach(quest => {
+    const questItem = document.createElement("div");
+    questItem.classList.add("quest-item");
 
-    // カード生成
-    const card = document.createElement("div");
-    card.className = "quest-card " + getAttributeClass(q.attribute);
+    // 属性カラー
+    const attrColor = attributeColors[quest.attribute] || "#ccc";
+    questItem.style.borderLeft = `8px solid ${attrColor}`;
 
-    card.innerHTML = `
-      <div>${q.category} : ${q.name}</div>
-      <div>必須: ${q.required.join(", ") || "なし"}</div>
-      <div>出現: ${q.appearance.join(", ") || "なし"}</div>
-      <div>${q.stage.join(", ")}</div>
+    questItem.innerHTML = `
+      <div><strong>${quest.category}</strong> - ${quest.name}</div>
+      <div>出現ギミック: ${quest.gimmicks.join(" / ")}</div>
     `;
-    questList.appendChild(card);
+
+    questList.appendChild(questItem);
   });
 }
 
-// 属性クラス変換
-function getAttributeClass(attr) {
-  switch (attr) {
-    case "火": return "quest-fire";
-    case "水": return "quest-water";
-    case "木": return "quest-wood";
-    case "光": return "quest-light";
-    case "闇": return "quest-dark";
-    default: return "";
+// フィルタ処理
+function filterQuests() {
+  const searchValue = document.getElementById("searchBox").value.trim();
+
+  if (searchValue) {
+    // 🔎 検索入力がある場合 → 名前検索のみ
+    const filtered = quests.filter(q => q.name.includes(searchValue));
+    renderQuests(filtered);
+    return;
   }
+
+  // 🔎 検索窓が空欄の場合 → ギミック絞り込み
+  const activeButtons = document.querySelectorAll(".gimmick-button.active");
+  const selectedGimmicks = Array.from(activeButtons).map(btn => btn.dataset.gimmick);
+
+  const filtered = quests.filter(quest =>
+    selectedGimmicks.every(gimmick => quest.gimmicks.includes(gimmick))
+  );
+
+  renderQuests(filtered);
 }
-
-// イベント設定
-searchBox.addEventListener("input", renderQuests);
-
-// 初期化
-createGimmickButtons();
-renderQuests();
